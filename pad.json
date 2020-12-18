@@ -1,0 +1,16 @@
+{
+    "grid": {
+        "dimensions": "5,5"
+    },
+    "commands": [{
+        "position": "1,1",
+        "type": "cmd",
+        "label": "Execute CMD",
+        "command": "cd ../\necho %cd%"
+    },{
+        "position": "2,2",
+        "type": "powershell",
+        "label": "Execute PS",
+        "command": "cd ../\necho (Get-Item .).FullName"
+    }]
+}
