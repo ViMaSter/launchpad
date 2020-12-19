@@ -6,11 +6,11 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using launchpad.Models;
 
-namespace launchpad.UIGenerator
+namespace launchpad.UI.Generator
 {
     public class CmdGenerator : ByMissionGenerator<CmdMission>
     {
-        public new Button Generate(CmdMission mission)
+        public Button Generate(CmdMission mission)
         {
             var lastLog = new MenuItem() { Header = "Open last log" };
             lastLog.Click += (sender, args) =>
@@ -23,7 +23,7 @@ namespace launchpad.UIGenerator
                 new LogOutputWindow(errorLog, LogOutputWindow.LogType.ERROR).ShowDialog();
             };
 
-            var button = base.Generate(mission);
+            var button = base.GenerateButton(mission);
             button.Click += OnClick;
 
             button.ContextMenu = new ContextMenu()

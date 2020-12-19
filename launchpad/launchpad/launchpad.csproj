@@ -15,4 +15,8 @@
     <Folder Include="icons\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Include="App.xaml" />
+  </ItemGroup>
+
 </Project>

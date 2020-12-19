@@ -76,7 +76,7 @@ namespace launchpad
 
             var objectForMission = Activator.CreateInstance(elementTypeForMission);
             
-            var button = (TElementType)objectForMission.GetType().GetMethod("Generate").Invoke(objectForMission, new object[]{mission});
+            var button = (TElementType)objectForMission.GetType().GetMethod("GenerateButton").Invoke(objectForMission, new object[]{mission});
             return button;
         }
 

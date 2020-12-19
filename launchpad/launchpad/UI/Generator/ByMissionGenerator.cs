@@ -1,11 +1,11 @@
 ﻿using System.Windows.Controls;
 using launchpad.Models;
 
-namespace launchpad.UIGenerator
+namespace launchpad.UI.Generator
 {
-    public abstract class ByMissionGenerator<M> where M : Mission
+    public abstract class ByMissionGenerator<TMission> where TMission : Mission
     {
-        public Button Generate(M mission)
+        public Button GenerateButton(TMission mission)
         {
             var button = new Button
             {

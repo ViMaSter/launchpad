@@ -3,13 +3,13 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using launchpad.Models;
 
-namespace launchpad.UIGenerator
+namespace launchpad.UI.Generator
 {
     public class PowershellGenerator : ByMissionGenerator<PowershellMission>
     {
-        public new Button Generate(PowershellMission mission)
+        public Button Generate(PowershellMission mission)
         {
-            var button = base.Generate(mission);
+            var button = base.GenerateButton(mission);
             button.Background = new LinearGradientBrush()
             {
                 StartPoint = new Point(0.5, 0),
