@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using Key = System.Windows.Input.Key;
 
 namespace launchpad
 {
@@ -88,7 +89,22 @@ namespace launchpad
 
         private void Close_OnClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
+        }
+
+        private void LogOutputWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.IsDown)
+            {
+                return;
+            }
+
+            if (e.Key != Key.Escape)
+            {
+                return;
+            }
+
+            Close();
         }
     }
 }

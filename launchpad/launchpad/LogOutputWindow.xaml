@@ -6,7 +6,7 @@
                     xmlns:local="clr-namespace:launchpad"
                     xmlns:controls="clr-namespace:Biaui.Controls;assembly=Biaui"
                     mc:Ignorable="d"
-                    Title="LogOutputWindow" Height="500" Width="1000">
+                    Title="LogOutputWindow" Height="500" Width="1000" KeyDown="LogOutputWindow_OnKeyDown">
     <Grid Margin="10,10,10,-6" IsEnabled="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="9*"></RowDefinition>
