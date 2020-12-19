@@ -15,9 +15,6 @@ using Microsoft.Win32;
 
 namespace launchpad
 {
-    /// <summary>
-    /// Interaction logic for LogOutputWindow.xaml
-    /// </summary>
     public partial class LogOutputWindow
     {
         public enum LogType
@@ -39,16 +36,17 @@ namespace launchpad
             };
             _content = content;
             InitializeComponent();
-            this.Title = logType switch
+
+            Title = logType switch
             {
                 LogType.LOG => "Log Output Viewer",
                 LogType.ERROR => "Error Output Viewer",
                 _ => throw new ArgumentOutOfRangeException(nameof(logType), logType, null)
             };
-            SetupContent();
+            SetupFlowDocument();
         }
 
-        private void SetupContent()
+        private void SetupFlowDocument()
         {
             var paragraph = new Paragraph()
             {
@@ -63,20 +61,13 @@ namespace launchpad
                 FontFamily = paragraph.FontFamily,
                 FontSize = paragraph.FontSize
             };
-
             textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-
             doc.PageWidth = textBlock.DesiredSize.Width + 50;
-
-            paragraph.Inlines.Clear();
-
             while (textBlock.Inlines.Count > 0)
             {
                 paragraph.Inlines.Add(textBlock.Inlines.FirstInline);
             }
-
         }
-
 
         private void Save_OnClick(object sender, RoutedEventArgs e)
         {

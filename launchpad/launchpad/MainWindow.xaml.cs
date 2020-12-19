@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,119 +10,12 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using launchpad.JsonConverter;
+using launchpad.Models;
 using Newtonsoft.Json;
 
 namespace launchpad
 {
-    public abstract class ButtonGenerator<M> where M : Mission
-    {
-        public Button Generate(M mission)
-        {
-            var button = new Button
-            {
-                Content = mission
-            };
-            System.Windows.Controls.Grid.SetColumn(button, (int)mission.position.X);
-            System.Windows.Controls.Grid.SetRow(button, (int)mission.position.Y);
-            return button;
-        }
-    }
-
-    public class CmdButtonGenerator : ButtonGenerator<CmdMission>
-    {
-        public new Button Generate(CmdMission mission)
-        {
-            var lastLog = new MenuItem() { Header = "Open last log" };
-            lastLog.Click += (sender, args) =>
-            {
-                new LogOutputWindow(outputLog, LogOutputWindow.LogType.LOG).ShowDialog();
-            };
-            var lastErrorLog = new MenuItem() { Header = "Open last error log" };
-            lastErrorLog.Click += (sender, args) =>
-            {
-                new LogOutputWindow(errorLog, LogOutputWindow.LogType.ERROR).ShowDialog();
-            };
-
-            var button = base.Generate(mission);
-            button.Click += OnClick;
-
-            button.ContextMenu = new ContextMenu()
-            {
-                Items =
-                {
-                    lastLog,
-                    lastErrorLog
-                }
-            };
-
-            button.Background = new LinearGradientBrush()
-            {
-                StartPoint = new Point(0.5, 0),
-                EndPoint = new Point(0.5, 1),
-                GradientStops = new GradientStopCollection()
-                {
-                    new GradientStop(Color.FromRgb(46, 46, 46), 0),
-                    new GradientStop(Color.FromRgb(23, 23, 23), 1),
-                }
-            };
-            return button;
-        }
-
-        private void OnClick(object sender, RoutedEventArgs e)
-        {
-            var getTempBat = Path.GetTempFileName();
-            File.Move(getTempBat, getTempBat + ".bat");
-            getTempBat += ".bat";
-            var button = (Button) sender;
-            CmdMission mission = (CmdMission) button.Content;
-            File.WriteAllText(getTempBat, mission.command.Replace("\\n", "\n"));
-
-            var process = Process.Start(new ProcessStartInfo(getTempBat)
-            {
-                WorkingDirectory = Directory.GetCurrentDirectory(),
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            });
-            process.ErrorDataReceived += ProcessOnErrorDataReceived;
-            process.OutputDataReceived += ProcessOnOutputDataReceived;
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-        }
-
-        private string errorLog = "";
-        private string outputLog = "";
-        private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            outputLog += $"[{DateTime.Now:yyyy-MM-dd hh:mm:ss}]{e.Data}{Environment.NewLine}";
-        }
-
-        private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            errorLog += e.Data + Environment.NewLine;
-        }
-    }
-
-    public class PowershellButtonGenerator : ButtonGenerator<PowershellMission>
-    {
-        public new Button Generate(PowershellMission mission)
-        {
-            var button = base.Generate(mission);
-            button.Background = new LinearGradientBrush()
-            {
-                StartPoint = new Point(0.5, 0),
-                EndPoint = new Point(0.5, 1),
-                GradientStops = new GradientStopCollection()
-                {
-                    new GradientStop(Color.FromRgb(19, 45, 96), 0),
-                    new GradientStop(Color.FromRgb(15, 35, 75), 1),
-                }
-            };
-            return button;
-        }
-    }
-
     public partial class MainWindow
     {
         private const int ROW_WIDTH = 150;
@@ -165,25 +57,26 @@ namespace launchpad
 
             foreach (var mission in config.commands)
             {
-                buttonByPos[(int)mission.position.X, (int)mission.position.Y] = GenerateButton(mission);
+                var button = GenerateMissionElement<Button>(mission);
+                button.Height = ROW_HEIGHT;
+                button.Width = ROW_WIDTH;
+                buttonByPos[(int)mission.position.X, (int)mission.position.Y] = button;
                 MissionGrid.Children.Add(buttonByPos[(int)mission.position.X, (int)mission.position.Y]);
             }
         }
 
-        public Button GenerateButton(Mission mission)
+        public TElementType GenerateMissionElement<TElementType>(Mission mission)
         {
-            var c = Assembly.GetExecutingAssembly()
+            var matchingElementTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(myType => myType.IsClass)
                 .Where(myType => !myType.IsAbstract);
-            var type = c
+            var elementTypeForMission = matchingElementTypes
                 .First(myType => myType.BaseType.GenericTypeArguments.Contains(mission.GetType()));
 
-            var gen = Activator.CreateInstance(type);
+            var objectForMission = Activator.CreateInstance(elementTypeForMission);
             
-            var button = (Button)gen.GetType().GetMethod("Generate").Invoke(gen, new object[]{mission});
-            button.Height = ROW_HEIGHT;
-            button.Width = ROW_WIDTH;
+            var button = (TElementType)objectForMission.GetType().GetMethod("Generate").Invoke(objectForMission, new object[]{mission});
             return button;
         }
 
