@@ -6,7 +6,8 @@
         "position": "1,1",
         "type": "cmd",
         "label": "Execute CMD",
-        "command": "cd ../\necho %cd%"
+        "command": "cd ../\necho directory: %cd%\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage"
+        
     },{
         "position": "2,2",
         "type": "powershell",

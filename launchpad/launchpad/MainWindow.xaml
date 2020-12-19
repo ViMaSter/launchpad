@@ -6,15 +6,20 @@
                     xmlns:local="clr-namespace:launchpad"
                     xmlns:controls="clr-namespace:Biaui.Controls;assembly=Biaui"
                     mc:Ignorable="d"
-                    Title="MainWindow" Height="450" Width="800">
-    <Grid x:Name="MissionGrid">
-        <Button Content="Button" HorizontalAlignment="Center" VerticalAlignment="Center" Height="414" Width="780">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF2E2E2E"/>
-                    <GradientStop Color="#FF171717" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
-        </Button>
+                    Title="Launchpad" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ComboBox Name="PadSelector" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="0, 0,0,0" Width="770"/>
+        <Button Name="PadConfigurationButton" Grid.Column="1" Grid.Row="0" Content="o" Height="30" VerticalContentAlignment="Center"/>
+        <ScrollViewer Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+            <Grid x:Name="MissionGrid"></Grid>
+        </ScrollViewer>
     </Grid>
 </controls:BiaWindow>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -25,6 +26,10 @@ namespace launchpad
         public Point position { get; set; }
         public string type { get; set; }
         public string label { get; set; }
+        [JsonIgnore]
+        public Process currentProcess { get; set; }
+
+        public override string ToString() => label;
     }
 
     public class CmdMission : Mission
