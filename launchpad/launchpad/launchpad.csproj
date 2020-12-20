@@ -19,4 +19,11 @@
     <Page Include="App.xaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="UI\CmdEdit - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>CmdEdit.xaml.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

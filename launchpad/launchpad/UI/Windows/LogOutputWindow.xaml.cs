@@ -70,7 +70,7 @@ namespace launchpad
             }
         }
 
-        private void Save_OnClick(object sender, RoutedEventArgs e)
+        private void OnSaveClick(object sender, RoutedEventArgs e)
         {
             FileDialog dialog = new SaveFileDialog()
             {
@@ -87,7 +87,7 @@ namespace launchpad
             File.WriteAllText(dialog.FileName, _content);
         }
 
-        private void Close_OnClick(object sender, RoutedEventArgs e)
+        private void OnCloseClick(object sender, RoutedEventArgs e)
         {
             Close();
         }

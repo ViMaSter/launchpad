@@ -3,14 +3,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using launchpad.Models;
+using launchpad.UI.Windows;
+using Grid = System.Windows.Controls.Grid;
 
 namespace launchpad.UI.Generator
 {
-    public class CmdGenerator : ByMissionGenerator<CmdMission>
+    public class PowershellBasedUIGenerator : MissionBasedUIGenerator<PowershellMission>
     {
-        public Button Generate(CmdMission mission)
+        public new Button GenerateButton(PowershellMission mission)
         {
             var lastLog = new MenuItem() { Header = "Open last log" };
             lastLog.Click += (sender, args) =>
@@ -24,12 +27,20 @@ namespace launchpad.UI.Generator
             };
 
             var button = base.GenerateButton(mission);
-            button.Click += OnClick;
+            button.UnmodifiedClickEvent += OnClick;
+
+            var edit = new MenuItem() { Header = "Edit" };
+            edit.Click += (sender, args) =>
+            {
+                button.CtrlClickEvent(sender, args);
+            };
 
             button.ContextMenu = new ContextMenu()
             {
                 Items =
                 {
+                    edit,
+                    new Separator(),
                     lastLog,
                     lastErrorLog
                 }
@@ -41,23 +52,28 @@ namespace launchpad.UI.Generator
                 EndPoint = new Point(0.5, 1),
                 GradientStops = new GradientStopCollection()
                 {
-                    new GradientStop(Color.FromRgb(46, 46, 46), 0),
-                    new GradientStop(Color.FromRgb(23, 23, 23), 1),
+                    new GradientStop(Color.FromRgb(19, 45, 96), 0),
+                    new GradientStop(Color.FromRgb(15, 35, 75), 1),
                 }
             };
             return button;
         }
 
-        private void OnClick(object sender, RoutedEventArgs e)
+        public UserControl GeneratePage(PowershellMission mission)
         {
-            var getTempBat = Path.GetTempFileName();
-            File.Move(getTempBat, getTempBat + ".bat");
-            getTempBat += ".bat";
-            var button = (Button) sender;
-            CmdMission mission = (CmdMission) button.Content;
-            File.WriteAllText(getTempBat, mission.command.Replace("\\n", "\n"));
+            return new PowershellUserControl();
+        }
 
-            var process = Process.Start(new ProcessStartInfo(getTempBat)
+        private void OnClick(object sender, EventArgs e)
+        {
+            var tempFilePath = Path.GetTempFileName();
+            File.Move(tempFilePath, tempFilePath + ".ps1");
+            tempFilePath += ".ps1";
+            var button = (Button)sender;
+            PowershellMission mission = (PowershellMission)button.Content;
+            File.WriteAllText(tempFilePath, mission.command.Replace("\\n", "\n"));
+
+            var process = Process.Start(new ProcessStartInfo(tempFilePath)
             {
                 WorkingDirectory = Directory.GetCurrentDirectory(),
                 RedirectStandardOutput = true,
@@ -69,6 +85,8 @@ namespace launchpad.UI.Generator
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
             process.WaitForExit();
+
+            File.Delete(tempFilePath);
         }
 
         private string errorLog = "";
