@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using launchpad.Models;
 using launchpad.ModelWrapper;
 using launchpad.UI.Generator;
@@ -26,12 +27,18 @@ namespace launchpad.UI.Windows
 
         public static TMissionWrapper OpenEdit<TMissionWrapper>(TMissionWrapper input) where TMissionWrapper : MissionWrapper
         {
+            var newMission = (Mission)input.mission.Clone();
             var window = new EditMissionWindow
             {
-                DataContext = input.mission,
+                DataContext = newMission,
                 TypeSpecificUserControl = {Content = App.GenerateUIElement<MissionUserControl>(input)}
             };
             window.ShowDialog();
+            if (window.DialogResult.HasValue && window.DialogResult.Value)
+            {
+                return (TMissionWrapper)App.WrapMission(newMission);
+            }
+
             return input;
         }
 
@@ -61,6 +68,21 @@ namespace launchpad.UI.Windows
             var missionWrapper = (MissionWrapper)Activator.CreateInstance(type, (Mission)DataContext);
 
             TypeSpecificUserControl.Content = App.GenerateUIElement<MissionUserControl>(missionWrapper);
+        }
+
+        private void EditMissionWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                OnOKClick(sender, null);
+                return;
+            }
+
+            if (e.Key == Key.Escape)
+            {
+                OnCancelClick(sender, null);
+                return;
+            }
         }
     }
 }

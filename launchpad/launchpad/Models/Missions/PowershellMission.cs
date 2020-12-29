@@ -31,5 +31,16 @@ namespace launchpad.Models
                 OnPropertyChanged();
             }
         }
+
+        public override object Clone()
+        {
+            var newMission = (Mission)new PowershellMission()
+            {
+                _workingDirectory = _workingDirectory,
+                _command = _command
+            };
+            Clone(ref newMission);
+            return newMission;
+        }
     }
 }

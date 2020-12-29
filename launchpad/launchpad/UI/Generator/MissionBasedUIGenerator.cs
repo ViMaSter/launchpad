@@ -23,7 +23,7 @@ namespace launchpad.UI.Generator
                 {
                     return;
                 }
-                var newMission = Windows.EditMissionWindow.OpenEdit((MissionWrapper)button.DataContext);
+                button.DataContext = Windows.EditMissionWindow.OpenEdit((MissionWrapper)button.DataContext);
             };
             return button;
         }

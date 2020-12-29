@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using launchpad.JsonConverter;
 using launchpad.Models;
+using launchpad.ModelWrapper;
 using launchpad.UI.Generator;
 using Newtonsoft.Json;
 
@@ -71,7 +72,7 @@ namespace launchpad
             var button = App.GenerateUIElement<ModifierKeysButton>(App.WrapMission(mission));
             button.CtrlClickEvent += (sender, args) =>
             {
-                RebuildButton(mission);
+                RebuildButton(((MissionWrapper)button.DataContext).mission);
             };
 
             buttonByPos[mission.X, mission.Y].Content = button;

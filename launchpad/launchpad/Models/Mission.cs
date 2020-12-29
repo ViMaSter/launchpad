@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace launchpad.Models
 {
-    public abstract class Mission : INotifyPropertyChanged
+    public abstract class Mission : INotifyPropertyChanged, ICloneable
     {
         private string _type;
         private string _label;
@@ -60,6 +61,15 @@ namespace launchpad.Models
         }
 
         public override string ToString() => label;
+        public abstract object Clone();
+
+        protected void Clone(ref Mission output)
+        {
+            output._type = _type;
+            output._label = _label;
+            output.position = position;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
