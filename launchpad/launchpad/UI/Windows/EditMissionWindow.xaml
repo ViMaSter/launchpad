@@ -3,10 +3,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:local="clr-namespace:launchpad.UI.Windows"
+                    xmlns:models="clr-namespace:launchpad.Models"
                     xmlns:controls="clr-namespace:Biaui.Controls;assembly=Biaui"
+                    xmlns:converters="clr-namespace:launchpad.Converters"
                     mc:Ignorable="d"
-                    Title="EditMissionWindow" Height="800" Width="450">
+                    Title="EditMissionWindow" Height="800" Width="450" d:DataContext="{d:DesignInstance models:Mission }">
+    <Window.Resources>
+        <converters:MissionToTypeStringConverter x:Key="MissionToTypeStringConverter" />
+    </Window.Resources>
     <Grid Name="Content">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"></ColumnDefinition>
@@ -20,22 +24,28 @@
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition Height="9*"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">Label:</Label>
-        <TextBox Name="Label" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"></TextBox>
+        <TextBox Name="Label" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" VerticalAlignment="Stretch" Text="{Binding label}"></TextBox>
         
         <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Position:</Label>
         <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">X:</Label>
-        <TextBox Name="X" Grid.Row="1" Grid.Column="3"></TextBox>
+        <TextBox Name="X" Grid.Row="1" Grid.Column="3" Text="{Binding X}"></TextBox>
         <Label Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center">Y:</Label>
-        <TextBox Name="Y" Grid.Row="1" Grid.Column="5"></TextBox>
+        <TextBox Name="Y" Grid.Row="1" Grid.Column="5" Text="{Binding Y}"></TextBox>
         
         <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Type:</Label>
-        <ComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Name="Type"></ComboBox>
+        <ComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Name="Type" SelectionChanged="Type_SelectionChanged" SelectedItem="{Binding type}"></ComboBox>
 
-        <Button Grid.Row="4" Grid.Column="0" Content="OK" Click="OnOKClick"></Button>
-        <Button Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="4" Content="Cancel" Click="OnCancelClick"></Button>
+        <Separator Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6"/>
+
+        <ContentPresenter Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Name="TypeSpecificUserControl" />
+
+        <Button Grid.Row="6" Grid.Column="0" Content="OK" Click="OnOKClick"></Button>
+        <Button Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="4" Content="Cancel" Click="OnCancelClick"></Button>
     </Grid>
 </controls:BiaWindow>

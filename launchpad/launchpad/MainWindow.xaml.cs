@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using launchpad.JsonConverter;
 using launchpad.Models;
+using launchpad.UI.Generator;
 using Newtonsoft.Json;
 
 namespace launchpad
@@ -20,11 +21,14 @@ namespace launchpad
     {
         private const int ROW_WIDTH = 150;
         private const int ROW_HEIGHT = 50;
+        private ContentPresenter[,] buttonByPos;
+
         public void Reset()
         {
             MissionGrid.RowDefinitions.Clear();
             MissionGrid.ColumnDefinitions.Clear();
             MissionGrid.Children.Clear();
+            buttonByPos = new ContentPresenter[0,0];
         }
         public void LoadPadConfig(PadConfig config)
         {
@@ -37,17 +41,18 @@ namespace launchpad
                 MissionGrid.RowDefinitions.Add(new RowDefinition(){Height = new GridLength(ROW_HEIGHT) });
             }
 
-            Button[,] buttonByPos = new Button[(int)config.grid.dimensions.X, (int)config.grid.dimensions.Y];
+            buttonByPos = new ContentPresenter[(int)config.grid.dimensions.X, (int)config.grid.dimensions.Y];
 
             for (var x = 0; x < config.grid.dimensions.X; ++x)
             {
                 for (var y = 0; y < config.grid.dimensions.Y; ++y)
                 {
-                    buttonByPos[x,y] = new Button()
+                    buttonByPos[x, y] = new ContentPresenter
                     {
-                        Background = new SolidColorBrush(Color.FromRgb(255, 0, 0)),
-                        Width = ROW_WIDTH,
-                        Height = ROW_HEIGHT
+                        Content = new Button()
+                        {
+                            Background = new SolidColorBrush(Color.FromRgb(255, 0, 0))
+                        }
                     };
                     System.Windows.Controls.Grid.SetColumn(buttonByPos[x, y], x);
                     System.Windows.Controls.Grid.SetRow(buttonByPos[x, y], y);
@@ -57,27 +62,19 @@ namespace launchpad
 
             foreach (var mission in config.commands)
             {
-                var button = GenerateMissionElement<Button>(mission);
-                button.Height = ROW_HEIGHT;
-                button.Width = ROW_WIDTH;
-                buttonByPos[(int)mission.position.X, (int)mission.position.Y] = button;
-                MissionGrid.Children.Add(buttonByPos[(int)mission.position.X, (int)mission.position.Y]);
+                RebuildButton(mission);
             }
         }
 
-        public TElementType GenerateMissionElement<TElementType>(Mission mission)
+        private void RebuildButton(Mission mission)
         {
-            var matchingElementTypes = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(myType => myType.IsClass)
-                .Where(myType => !myType.IsAbstract);
-            var elementTypeForMission = matchingElementTypes
-                .First(myType => myType.BaseType.GenericTypeArguments.Contains(mission.GetType()));
+            var button = App.GenerateUIElement<ModifierKeysButton>(App.WrapMission(mission));
+            button.CtrlClickEvent += (sender, args) =>
+            {
+                RebuildButton(mission);
+            };
 
-            var objectForMission = Activator.CreateInstance(elementTypeForMission);
-            
-            var button = (TElementType)objectForMission.GetType().GetMethod("GenerateButton").Invoke(objectForMission, new object[]{mission});
-            return button;
+            buttonByPos[mission.X, mission.Y].Content = button;
         }
 
         public MainWindow()

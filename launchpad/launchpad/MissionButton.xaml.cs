@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace launchpad.UI.Windows
+namespace launchpad
 {
     /// <summary>
-    /// Interaction logic for CmdUserControl.xaml
+    /// Interaction logic for MissionButton.xaml
     /// </summary>
-    public partial class CmdUserControl : UserControl
+    public partial class MissionButton : Page
     {
-        public CmdUserControl()
+        public MissionButton()
         {
             InitializeComponent();
         }

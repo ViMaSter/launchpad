@@ -6,28 +6,30 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using launchpad.Models;
+using launchpad.ModelWrapper;
+using launchpad.UI.UserControls;
 using launchpad.UI.Windows;
 using Grid = System.Windows.Controls.Grid;
 
 namespace launchpad.UI.Generator
 {
-    public class CmdBasedUIGenerator : MissionBasedUIGenerator<CmdMission>
+    public class CmdBasedUIGenerator : MissionBasedUIGenerator<CmdMissionWrapper>
     {
-        public new Button GenerateButton(CmdMission mission)
+        public new ModifierKeysButton GenerateButton(CmdMissionWrapper missionWrapper)
         {
             var lastLog = new MenuItem() { Header = "Open last log" };
             lastLog.Click += (sender, args) =>
             {
-                new LogOutputWindow(outputLog, LogOutputWindow.LogType.LOG).ShowDialog();
+                new LogOutputWindow(missionWrapper.outputLog, LogOutputWindow.LogType.LOG).ShowDialog();
             };
             var lastErrorLog = new MenuItem() { Header = "Open last error log" };
             lastErrorLog.Click += (sender, args) =>
             {
-                new LogOutputWindow(errorLog, LogOutputWindow.LogType.ERROR).ShowDialog();
+                new LogOutputWindow(missionWrapper.errorLog, LogOutputWindow.LogType.ERROR).ShowDialog();
             };
 
-            var button = base.GenerateButton(mission);
-            button.UnmodifiedClickEvent += OnClick;
+            var button = base.GenerateButton(missionWrapper);
+            button.UnmodifiedClickEvent += (sender, args) => { missionWrapper.Execute(); };
 
             var edit = new MenuItem() { Header = "Edit" };
             edit.Click += (sender, args) =>
@@ -59,46 +61,13 @@ namespace launchpad.UI.Generator
             return button;
         }
 
-        public UserControl GeneratePage(CmdMission mission)
+        public MissionUserControl GeneratePage(CmdMissionWrapper missionWrapper)
         {
-            return new CmdUserControl();
-        }
-
-        private void OnClick(object sender, EventArgs e)
-        {
-            var tempFilePath = Path.GetTempFileName();
-            File.Move(tempFilePath, tempFilePath + ".bat");
-            tempFilePath += ".bat";
-            var button = (Button) sender;
-            CmdMission mission = (CmdMission) button.Content;
-            File.WriteAllText(tempFilePath, mission.command.Replace("\\n", "\n"));
-
-            var process = Process.Start(new ProcessStartInfo(tempFilePath)
+            return new CmdUserControl
             {
-                WorkingDirectory = Directory.GetCurrentDirectory(),
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            });
-            process.ErrorDataReceived += ProcessOnErrorDataReceived;
-            process.OutputDataReceived += ProcessOnOutputDataReceived;
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-
-            File.Delete(tempFilePath);
-        }
-
-        private string errorLog = "";
-        private string outputLog = "";
-        private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            outputLog += $"[{DateTime.Now:yyyy-MM-dd hh:mm:ss}]{e.Data}{Environment.NewLine}";
-        }
-
-        private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            errorLog += e.Data + Environment.NewLine;
+                WorkingDirectory = {Text = missionWrapper.CmdMission.workingDirectory}, 
+                Script = {Text = missionWrapper.CmdMission.command}
+            };
         }
     }
 }

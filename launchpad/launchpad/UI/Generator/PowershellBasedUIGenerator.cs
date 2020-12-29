@@ -6,14 +6,16 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using launchpad.Models;
+using launchpad.ModelWrapper;
+using launchpad.UI.UserControls;
 using launchpad.UI.Windows;
 using Grid = System.Windows.Controls.Grid;
 
 namespace launchpad.UI.Generator
 {
-    public class PowershellBasedUIGenerator : MissionBasedUIGenerator<PowershellMission>
+    public class PowershellBasedUIGenerator : MissionBasedUIGenerator<PowershellMissionWrapper>
     {
-        public new Button GenerateButton(PowershellMission mission)
+        public new ModifierKeysButton GenerateButton(PowershellMissionWrapper missionWrapper)
         {
             var lastLog = new MenuItem() { Header = "Open last log" };
             lastLog.Click += (sender, args) =>
@@ -26,7 +28,7 @@ namespace launchpad.UI.Generator
                 new LogOutputWindow(errorLog, LogOutputWindow.LogType.ERROR).ShowDialog();
             };
 
-            var button = base.GenerateButton(mission);
+            var button = base.GenerateButton(missionWrapper);
             button.UnmodifiedClickEvent += OnClick;
 
             var edit = new MenuItem() { Header = "Edit" };
@@ -59,7 +61,7 @@ namespace launchpad.UI.Generator
             return button;
         }
 
-        public UserControl GeneratePage(PowershellMission mission)
+        public MissionUserControl GeneratePage(PowershellMissionWrapper missionWrapper)
         {
             return new PowershellUserControl();
         }
