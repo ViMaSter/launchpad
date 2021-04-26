@@ -1,8 +1,11 @@
-﻿namespace launchpad.Models
+﻿using System.Windows;
+
+namespace launchpad.Models
 {
     public class PadConfig
     {
-        public Grid grid { get; set; }
+        public string displayName { get; set; }
+        public Point dimensions { get; set; }
         public Mission[] commands { get; set; }
     }
 }

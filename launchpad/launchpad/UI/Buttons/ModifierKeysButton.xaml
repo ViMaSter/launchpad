@@ -1,0 +1,21 @@
+﻿<Button
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:modelwrapper="clr-namespace:launchpad.ModelWrapper"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" d:DataContext="{d:DesignInstance modelwrapper:MissionWrapper }">
+    <Button.Content>
+        <Label Content="{Binding Path=mission.label}" />
+    </Button.Content>
+    <Button.Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Green"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Red"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Button.Style>
+</Button>

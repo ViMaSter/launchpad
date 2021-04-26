@@ -1,18 +1,20 @@
 {
-    "grid": {
-        "dimensions": "5,5"
+  "displayName": "Command line example",
+  "dimensions": "5,5",
+  "commands": [
+    {
+      "position": "1,1",
+      "type": "cmd",
+      "label": "Execute CMD",
+      "workingDirectory": "{app.root}",
+      "command": "cd ../\necho directory: %cd%\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage"
     },
-    "commands": [{
-        "position": "1,1",
-        "type": "cmd",
-        "label": "Execute CMD",
-        "workingDirectory": "{app.root}",
-        "command": "cd ../\necho directory: %cd%\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage\necho errorMessage 1>&2\necho normalMessage"
-    },{
-        "position": "2,2",
-        "type": "powershell",
-        "label": "Execute PS",
-        "workingDirectory": "{app.root}",
-        "command": "cd ../\necho (Get-Item .).FullName"
-    }]
+    {
+      "position": "2,2",
+      "type": "powershell",
+      "label": "Execute PS",
+      "workingDirectory": "{app.root}",
+      "command": "cd ../\necho (Get-Item .).FullName"
+    }
+  ]
 }

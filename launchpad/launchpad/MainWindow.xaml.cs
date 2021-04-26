@@ -13,6 +13,7 @@ using System.Windows.Media;
 using launchpad.JsonConverter;
 using launchpad.Models;
 using launchpad.ModelWrapper;
+using launchpad.UI.Buttons;
 using launchpad.UI.Generator;
 using Newtonsoft.Json;
 
@@ -33,20 +34,20 @@ namespace launchpad
         }
         public void LoadPadConfig(PadConfig config)
         {
-            for (var x = 0; x < config.grid.dimensions.X; ++x)
+            for (var x = 0; x < config.dimensions.X; ++x)
             {
                 MissionGrid.ColumnDefinitions.Add(new ColumnDefinition(){Width = new GridLength(ROW_WIDTH) });
             }   
-            for (var y = 0; y < config.grid.dimensions.Y; ++y)
+            for (var y = 0; y < config.dimensions.Y; ++y)
             {
                 MissionGrid.RowDefinitions.Add(new RowDefinition(){Height = new GridLength(ROW_HEIGHT) });
             }
 
-            buttonByPos = new ContentPresenter[(int)config.grid.dimensions.X, (int)config.grid.dimensions.Y];
+            buttonByPos = new ContentPresenter[(int)config.dimensions.X, (int)config.dimensions.Y];
 
-            for (var x = 0; x < config.grid.dimensions.X; ++x)
+            for (var x = 0; x < config.dimensions.X; ++x)
             {
-                for (var y = 0; y < config.grid.dimensions.Y; ++y)
+                for (var y = 0; y < config.dimensions.Y; ++y)
                 {
                     buttonByPos[x, y] = new ContentPresenter
                     {
@@ -78,12 +79,27 @@ namespace launchpad
             buttonByPos[mission.X, mission.Y].Content = button;
         }
 
+        public class RuntimePadData
+        {
+            public string absoluteFilePath { get; set; }
+            public PadConfig padConfig { get; set; }
+
+            public string DisplayName => $"{padConfig.displayName} ({absoluteFilePath})";
+
+            public RuntimePadData(string path)
+            {
+                absoluteFilePath = path;
+                var pad = File.ReadAllText(absoluteFilePath);
+                padConfig = JsonConvert.DeserializeObject<PadConfig>(pad, new MissionConverter());
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
 
-            PadSelector.Items.Add("");
-            PadSelector.Items.Add("C:\\prj\\10_launchpad\\0_git\\pad.json");
+            PadSelector.Items.Add(null);
+            PadSelector.Items.Add(new RuntimePadData("C:\\prj\\10_launchpad\\0_git\\pad.json"));
             PadSelector.SelectionChanged += PadSelector_SelectionChanged;
 
             Reset();
@@ -97,15 +113,7 @@ namespace launchpad
                 return;
             }
 
-            string item = (string) e.AddedItems[0];
-            if (string.IsNullOrEmpty(item))
-            {
-                return;
-            }
-
-            var pad = File.ReadAllText(item);
-            var serializedPad = JsonConvert.DeserializeObject<PadConfig>(pad, new MissionConverter());
-            LoadPadConfig(serializedPad);
+            LoadPadConfig(((RuntimePadData)e.AddedItems[0]).padConfig);
         }
     }
 }

@@ -20,8 +20,9 @@ namespace launchpad.ModelWrapper
         public string outputLog = "";
         public string errorLog = "";
 
-        public override Task Execute()
+        public override Task StartExecution()
         {
+            CurrentMissionExecutionState = MissionExecutionState.RUNNING;
             return Task.Run(() =>
             {
                 var tempFilePath = Path.GetTempFileName();
@@ -41,6 +42,10 @@ namespace launchpad.ModelWrapper
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
                 process.WaitForExit();
+
+                CurrentMissionExecutionState = process.ExitCode == 0
+                    ? MissionExecutionState.SUCCESSFUL
+                    : MissionExecutionState.FAILED;
 
                 File.Delete(tempFilePath);
             });

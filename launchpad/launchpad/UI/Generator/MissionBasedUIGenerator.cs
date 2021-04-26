@@ -2,6 +2,7 @@
 using System.Windows.Data;
 using launchpad.Models;
 using launchpad.ModelWrapper;
+using launchpad.UI.Buttons;
 using Grid = System.Windows.Controls.Grid;
 
 namespace launchpad.UI.Generator

@@ -16,7 +16,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <ComboBox Name="PadSelector" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="0, 0,0,0" Width="770"/>
+        <ComboBox Name="PadSelector" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="0, 0,0,0" Width="770" DisplayMemberPath="DisplayName"/>
         <Button Name="PadConfigurationButton" Grid.Column="1" Grid.Row="0" Content="o" Height="30" VerticalContentAlignment="Center"/>
         <ScrollViewer Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
             <Grid Name="MissionGrid"></Grid>

@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using launchpad.Models;
 using launchpad.ModelWrapper;
+using launchpad.UI.Buttons;
 using launchpad.UI.UserControls;
 using launchpad.UI.Windows;
 using Grid = System.Windows.Controls.Grid;
@@ -29,7 +30,7 @@ namespace launchpad.UI.Generator
             };
 
             var button = base.GenerateButton(missionWrapper);
-            button.UnmodifiedClickEvent += (sender, args) => { missionWrapper.Execute(); };
+            button.UnmodifiedClickEvent += (sender, args) => { missionWrapper.StartExecution(); };
 
             var edit = new MenuItem() { Header = "Edit" };
             edit.Click += (sender, args) =>
@@ -48,7 +49,7 @@ namespace launchpad.UI.Generator
                 }
             };
 
-            button.Background = new LinearGradientBrush()
+            /*button.Background = new LinearGradientBrush()
             {
                 StartPoint = new Point(0.5, 0),
                 EndPoint = new Point(0.5, 1),
@@ -57,7 +58,8 @@ namespace launchpad.UI.Generator
                     new GradientStop(Color.FromRgb(46, 46, 46), 0),
                     new GradientStop(Color.FromRgb(23, 23, 23), 1),
                 }
-            };
+            };*/
+            
             return button;
         }
 
